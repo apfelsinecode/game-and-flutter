@@ -149,6 +149,7 @@ class _BallGameState extends State<BallGame> {
     stepBall0();
     stepBall1();
     stepBall2();
+
   }
 
   void stepBall0() {
