@@ -177,7 +177,7 @@ class _BallGameState extends State<BallGame> {
   void stepBall1() {
     setState(() {
       if (reflected1) {
-        if (ballPos1 == 1 && ballDir1 == _Direction.LEFT){
+        if (ballPos1 == 0 && ballDir1 == _Direction.LEFT){
           ballDir1 = _Direction.RIGHT;
         } else if (ballPos1 == arc1size - 1 && ballDir1 == _Direction.RIGHT) {
           ballDir1 = _Direction.LEFT;
@@ -200,9 +200,9 @@ class _BallGameState extends State<BallGame> {
   void stepBall2() {
     setState(() {
       if (reflected2) {
-        if (ballPos2 == 2 && ballDir2 == _Direction.LEFT){
+        if (ballPos2 == 0 && ballDir2 == _Direction.LEFT){
           ballDir2 = _Direction.RIGHT;
-        } else if (ballPos2 == arc1size - 1 && ballDir2 == _Direction.RIGHT) {
+        } else if (ballPos2 == arc2size - 1 && ballDir2 == _Direction.RIGHT) {
           ballDir2 = _Direction.LEFT;
         }
       }
