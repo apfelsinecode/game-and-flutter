@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class BallGame extends StatefulWidget {
@@ -15,17 +17,19 @@ enum _Direction {
 
 class _BallGameState extends State<BallGame> {
 
+  bool running = false;
+
   final arc0size = 12;
   final arc1size = 10;
   final arc2size = 8;
 
-  int ballPos0 = 4;
+  int ballPos0 = 2;
   int ballPos1 = 2;
-  int ballPos2 = 3;
+  int ballPos2 = 2;
 
-  var ballDir0 = _Direction.LEFT;
-  var ballDir1 = _Direction.RIGHT;
-  var ballDir2 = _Direction.RIGHT;
+  _Direction ballDir0 = _Direction.RIGHT;
+  _Direction ballDir1 = _Direction.RIGHT;
+  _Direction ballDir2 = _Direction.RIGHT;
 
   var reflected0 = false;
   var reflected1 = false;
@@ -35,6 +39,7 @@ class _BallGameState extends State<BallGame> {
 
   @override
   Widget build(BuildContext context) {
+    // initializeGame();
     return Column(
       children: [
         Row(
@@ -83,7 +88,10 @@ class _BallGameState extends State<BallGame> {
           children: [
             ElevatedButton(onPressed: leftClick, child: Text("<")),
             ElevatedButton(onPressed: step, child: Text("step()")),
-            ElevatedButton(onPressed: rightClick, child: Text(">"))
+            ElevatedButton(onPressed: rightClick, child: Text(">")),
+            IconButton(
+                icon: running ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+                onPressed: playPause)
           ],
         )
       ],
@@ -128,6 +136,21 @@ class _BallGameState extends State<BallGame> {
     }
   }
 
+  void playPause(){
+    setState(() {
+      running = !running;
+    });
+    if (running) {
+      if (checkLost()) {
+        initializeGame();
+      }
+
+      autoStepper();
+    } else {
+
+    }
+  }
+
   void setReflectedAtHandPos() {
     setState(() {
       switch (handPos) {
@@ -149,7 +172,11 @@ class _BallGameState extends State<BallGame> {
     stepBall0();
     stepBall1();
     stepBall2();
-
+    if (checkLost()) {
+      setState(() {
+        running = false;
+      });
+    }
   }
 
   void stepBall0() {
@@ -221,9 +248,24 @@ class _BallGameState extends State<BallGame> {
     });
   }
 
+  Future<void> autoStepper() async {
+    while (running) {
+      await Future.delayed(Duration(seconds: 1));
+      step();
+    }
+  }
 
-  void initializeGame() {
-
+  void initializeGame([int seed]) {
+    final random = Random(seed);
+    setState(() {
+      ballPos0 = random.nextInt(arc0size - 4) + 2;
+      ballPos1 = random.nextInt(arc1size - 4) + 2;
+      ballPos2 = random.nextInt(arc2size - 4) + 2;
+      ballDir0 = random.nextBool() ? _Direction.LEFT : _Direction.RIGHT;
+      ballDir1 = random.nextBool() ? _Direction.LEFT : _Direction.RIGHT;
+      ballDir2 = random.nextBool() ? _Direction.LEFT : _Direction.RIGHT;
+      // running = true;
+    });
   }
 
   bool checkLost() {
