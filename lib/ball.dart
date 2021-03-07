@@ -61,11 +61,17 @@ class _BallGameState extends State<BallGame> {
             Column(
               children: [
                 arc(arc0size,
-                    ballPos0),
+                    ballPos0,
+                    reflected0
+                ),
                 arc(arc1size,
-                    ballPos1),
+                    ballPos1,
+                    reflected1
+                ),
                 arc(arc2size,
-                    ballPos2)
+                    ballPos2,
+                    reflected2
+                )
               ],
             ),
             Column(
@@ -98,10 +104,10 @@ class _BallGameState extends State<BallGame> {
     );
   }
 
-  Widget arc(int size, int ballPos) {
+  Widget arc(int size, int ballPos, [bool reflected]) {
     var stencils = <Widget>[];
     for (int i = 0; i < size; i++) {
-      stencils.add(ballStencil(i == ballPos));
+      stencils.add(ballStencil(i == ballPos, reflected));
     }
     return Row(
       children: stencils,
@@ -109,13 +115,44 @@ class _BallGameState extends State<BallGame> {
   }
 
   Widget hand(bool active) {
-    return Text(active ? '||||' : '|  |');
+    return Container(
+      width: 10,
+      height: 20,
+      color: active ? Colors.black : Colors.grey,
+    );
+    // return Text(active ? '||||' : '|  |');
   }
 
-  Widget ballStencil(bool active) {
-    return active ?
-    Text("O") :
-    Text("-");
+  Widget ballStencil(bool active, [bool reflected]) {
+    Color color;
+    if (active) {
+      if (reflected != null) {
+        if (reflected) {
+          color = Colors.green;
+        } else {
+          color = Colors.red;
+        }
+      } else {
+        color = Colors.black;
+      }
+    } else {
+      color = Colors.grey;
+    }
+
+    return Container(
+      // color:
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+      ),
+      margin: EdgeInsets.all(1),
+    );
+
+    //   active ?
+    // Text("O") :
+    // Text("-");
   }
 
   void leftClick() {
