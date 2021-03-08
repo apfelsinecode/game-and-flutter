@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.flutter_test_eins">
+    package="io.github.apfelsinecode.game_and_flutter">
    <application
         android:label="flutter_test_eins"
         android:icon="@mipmap/ic_launcher">

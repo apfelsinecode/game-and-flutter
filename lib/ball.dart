@@ -221,7 +221,7 @@ class _BallGameState extends State<BallGame> {
       if (reflected0) {
         if (ballPos0 == 0 && ballDir0 == _Direction.LEFT){
           ballDir0 = _Direction.RIGHT;
-        } else if (ballPos0 == arc1size - 1 && ballDir0 == _Direction.RIGHT) {
+        } else if (ballPos0 == arc0size - 1 && ballDir0 == _Direction.RIGHT) {
           ballDir0 = _Direction.LEFT;
         }
       }

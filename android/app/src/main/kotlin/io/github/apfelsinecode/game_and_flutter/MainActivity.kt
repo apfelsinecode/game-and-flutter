@@ -1,4 +1,4 @@
-package com.example.flutter_test_eins
+package io.github.apfelsinecode.game_and_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 
