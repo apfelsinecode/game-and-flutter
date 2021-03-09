@@ -9,14 +9,9 @@ class BallGame extends StatefulWidget {
   }
 }
 
-enum _Direction {
-  LEFT,
-  RIGHT,
-  STOP
-}
+enum _Direction { LEFT, RIGHT, STOP }
 
 class _BallGameState extends State<BallGame> {
-
   bool running = false;
 
   final arc0size = 12;
@@ -40,67 +35,94 @@ class _BallGameState extends State<BallGame> {
   @override
   Widget build(BuildContext context) {
     // initializeGame();
-    return Column(
-      children: [
-        Row(
-          children: [
-            Column(
-              children: [
-                ballStencil(ballPos0 == -1),
-                ballStencil(ballPos1 == -1),
-                ballStencil(ballPos2 == -1),
-              ],
-            ),
-            Column(
-              children: [
-                hand(handPos == 0),
-                hand(handPos == 1),
-                hand(handPos == 2),
-              ],
-            ),
-            Column(
-              children: [
-                arc(arc0size,
-                    ballPos0,
-                    reflected0
-                ),
-                arc(arc1size,
-                    ballPos1,
-                    reflected1
-                ),
-                arc(arc2size,
-                    ballPos2,
-                    reflected2
-                )
-              ],
-            ),
-            Column(
-              children: [
-                hand(handPos == 0),
-                hand(handPos == 1),
-                hand(handPos == 2),
-              ],
-            ),
-            Column(
-              children: [
-                ballStencil(ballPos0 == arc0size),
-                ballStencil(ballPos1 == arc1size),
-                ballStencil(ballPos2 == arc2size),
-              ],
-            ),
-          ],
+    return Container(
+        // color: Colors.lightGreen,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black,
+          ),
+          borderRadius: BorderRadius.circular(10),
         ),
-        Row(
+        child: Column(
           children: [
-            ElevatedButton(onPressed: leftClick, child: Text("<")),
-            ElevatedButton(onPressed: step, child: Text("step()")),
-            ElevatedButton(onPressed: rightClick, child: Text(">")),
-            IconButton(
-                icon: running ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-                onPressed: playPause)
+            screen(),
+            Row(
+              children: [
+                roundButton(Icon(Icons.chevron_left), leftClick),
+                ElevatedButton(onPressed: step, child: Text("step()")),
+                roundButton(Icon(Icons.chevron_right), rightClick),
+                IconButton(
+                    icon: running ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+                    onPressed: playPause)
+              ],
+            )
           ],
-        )
-      ],
+        ));
+  }
+
+  Widget screen() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.lightGreenAccent,
+        border: Border.all(
+          color: Colors.black,
+          width: 4,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: EdgeInsets.all(20),
+
+      child: Row(
+        children: [
+          Column(
+            children: [
+              ballStencil(ballPos0 == -1),
+              ballStencil(ballPos1 == -1),
+              ballStencil(ballPos2 == -1),
+            ],
+          ),
+          Column(
+            children: [
+              hand(handPos == 0),
+              hand(handPos == 1),
+              hand(handPos == 2),
+            ],
+          ),
+          Column(
+            children: [
+              arc(
+                arc0size,
+                ballPos0,
+                // reflected0
+              ),
+              arc(
+                arc1size,
+                ballPos1,
+                // reflected1
+              ),
+              arc(
+                arc2size,
+                ballPos2,
+                // reflected2
+              )
+            ],
+          ),
+          Column(
+            children: [
+              hand(handPos == 0),
+              hand(handPos == 1),
+              hand(handPos == 2),
+            ],
+          ),
+          Column(
+            children: [
+              ballStencil(ballPos0 == arc0size),
+              ballStencil(ballPos1 == arc1size),
+              ballStencil(ballPos2 == arc2size),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -119,6 +141,7 @@ class _BallGameState extends State<BallGame> {
       width: 10,
       height: 20,
       color: active ? Colors.black : Colors.grey,
+      margin: EdgeInsets.all(5),
     );
     // return Text(active ? '||||' : '|  |');
   }
@@ -147,12 +170,36 @@ class _BallGameState extends State<BallGame> {
         shape: BoxShape.circle,
         color: color,
       ),
-      margin: EdgeInsets.all(1),
+      margin: EdgeInsets.all(5),
     );
 
     //   active ?
     // Text("O") :
     // Text("-");
+  }
+
+  Widget roundButton(Icon icon, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: icon,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.red,
+      ),
+
+    );
+
+    // return Container(
+    //   decoration: BoxDecoration(
+    //     shape: BoxShape.circle,
+    //
+    //   ),
+    //   child: IconButton(
+    //     icon: icon,
+    //     onPressed: onPressed,
+    //     color: Colors.blue,
+    //     disabledColor: Colors.red,
+    //   ),
+    // );
   }
 
   void leftClick() {
@@ -173,7 +220,7 @@ class _BallGameState extends State<BallGame> {
     }
   }
 
-  void playPause(){
+  void playPause() {
     setState(() {
       running = !running;
     });
@@ -183,9 +230,7 @@ class _BallGameState extends State<BallGame> {
       }
 
       autoStepper();
-    } else {
-
-    }
+    } else {}
   }
 
   void setReflectedAtHandPos() {
@@ -219,7 +264,7 @@ class _BallGameState extends State<BallGame> {
   void stepBall0() {
     setState(() {
       if (reflected0) {
-        if (ballPos0 == 0 && ballDir0 == _Direction.LEFT){
+        if (ballPos0 == 0 && ballDir0 == _Direction.LEFT) {
           ballDir0 = _Direction.RIGHT;
         } else if (ballPos0 == arc0size - 1 && ballDir0 == _Direction.RIGHT) {
           ballDir0 = _Direction.LEFT;
@@ -242,7 +287,7 @@ class _BallGameState extends State<BallGame> {
   void stepBall1() {
     setState(() {
       if (reflected1) {
-        if (ballPos1 == 0 && ballDir1 == _Direction.LEFT){
+        if (ballPos1 == 0 && ballDir1 == _Direction.LEFT) {
           ballDir1 = _Direction.RIGHT;
         } else if (ballPos1 == arc1size - 1 && ballDir1 == _Direction.RIGHT) {
           ballDir1 = _Direction.LEFT;
@@ -265,7 +310,7 @@ class _BallGameState extends State<BallGame> {
   void stepBall2() {
     setState(() {
       if (reflected2) {
-        if (ballPos2 == 0 && ballDir2 == _Direction.LEFT){
+        if (ballPos2 == 0 && ballDir2 == _Direction.LEFT) {
           ballDir2 = _Direction.RIGHT;
         } else if (ballPos2 == arc2size - 1 && ballDir2 == _Direction.RIGHT) {
           ballDir2 = _Direction.LEFT;
@@ -306,9 +351,11 @@ class _BallGameState extends State<BallGame> {
   }
 
   bool checkLost() {
-    return (ballPos0 < 0 || ballPos0 >= arc0size
-        || ballPos1 < 0 || ballPos1 >= arc1size
-        || ballPos2 < 0 || ballPos2 >= arc2size);
+    return (ballPos0 < 0 ||
+        ballPos0 >= arc0size ||
+        ballPos1 < 0 ||
+        ballPos1 >= arc1size ||
+        ballPos2 < 0 ||
+        ballPos2 >= arc2size);
   }
 }
-
