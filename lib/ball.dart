@@ -36,17 +36,19 @@ class _BallGameState extends State<BallGame> {
   Widget build(BuildContext context) {
     // initializeGame();
     return Container(
-        // color: Colors.lightGreen,
         decoration: BoxDecoration(
           border: Border.all(
             color: Colors.black,
           ),
           borderRadius: BorderRadius.circular(10),
         ),
+        padding: EdgeInsets.all(8),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             screen(),
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 roundButton(Icon(Icons.chevron_left), leftClick),
                 ElevatedButton(onPressed: step, child: Text("step()")),
@@ -57,7 +59,8 @@ class _BallGameState extends State<BallGame> {
               ],
             )
           ],
-        ));
+        )
+    );
   }
 
   Widget screen() {
@@ -73,6 +76,7 @@ class _BallGameState extends State<BallGame> {
       padding: EdgeInsets.all(20),
 
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Column(
             children: [
