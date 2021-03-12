@@ -35,21 +35,23 @@ class _BallGameState extends State<BallGame> {
   @override
   Widget build(BuildContext context) {
     // initializeGame();
-    return Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
+    return Center(
+      child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+            ),
+            borderRadius: BorderRadius.circular(10),
           ),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            screen(),
-            gameControlButtons(),
-          ],
-        )
+          padding: EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              screen(),
+              gameControlButtons(),
+            ],
+          )
+      ),
     );
   }
 
