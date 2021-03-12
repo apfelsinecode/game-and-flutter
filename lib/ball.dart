@@ -47,84 +47,92 @@ class _BallGameState extends State<BallGame> {
           mainAxisSize: MainAxisSize.min,
           children: [
             screen(),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                roundButton(Icon(Icons.chevron_left), leftClick),
-                ElevatedButton(onPressed: step, child: Text("step()")),
-                roundButton(Icon(Icons.chevron_right), rightClick),
-                IconButton(
-                    icon: running ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-                    onPressed: playPause)
-              ],
-            )
+            gameControlButtons(),
           ],
         )
     );
   }
 
   Widget screen() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.lightGreenAccent,
-        border: Border.all(
-          color: Colors.black,
-          width: 4,
+    return FittedBox(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.lightGreenAccent,
+          border: Border.all(
+            color: Colors.black,
+            width: 4,
+          ),
+          borderRadius: BorderRadius.circular(20),
         ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
 
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Column(
+              children: [
+                ballStencil(ballPos0 == -1),
+                ballStencil(ballPos1 == -1),
+                ballStencil(ballPos2 == -1),
+              ],
+            ),
+            Column(
+              children: [
+                hand(handPos == 0),
+                hand(handPos == 1),
+                hand(handPos == 2),
+              ],
+            ),
+            Column(
+              children: [
+                arc(
+                  arc0size,
+                  ballPos0,
+                  // reflected0
+                ),
+                arc(
+                  arc1size,
+                  ballPos1,
+                  // reflected1
+                ),
+                arc(
+                  arc2size,
+                  ballPos2,
+                  // reflected2
+                )
+              ],
+            ),
+            Column(
+              children: [
+                hand(handPos == 0),
+                hand(handPos == 1),
+                hand(handPos == 2),
+              ],
+            ),
+            Column(
+              children: [
+                ballStencil(ballPos0 == arc0size),
+                ballStencil(ballPos1 == arc1size),
+                ballStencil(ballPos2 == arc2size),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget gameControlButtons() {
+    return FittedBox(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Column(
-            children: [
-              ballStencil(ballPos0 == -1),
-              ballStencil(ballPos1 == -1),
-              ballStencil(ballPos2 == -1),
-            ],
-          ),
-          Column(
-            children: [
-              hand(handPos == 0),
-              hand(handPos == 1),
-              hand(handPos == 2),
-            ],
-          ),
-          Column(
-            children: [
-              arc(
-                arc0size,
-                ballPos0,
-                // reflected0
-              ),
-              arc(
-                arc1size,
-                ballPos1,
-                // reflected1
-              ),
-              arc(
-                arc2size,
-                ballPos2,
-                // reflected2
-              )
-            ],
-          ),
-          Column(
-            children: [
-              hand(handPos == 0),
-              hand(handPos == 1),
-              hand(handPos == 2),
-            ],
-          ),
-          Column(
-            children: [
-              ballStencil(ballPos0 == arc0size),
-              ballStencil(ballPos1 == arc1size),
-              ballStencil(ballPos2 == arc2size),
-            ],
-          ),
+          roundButton(Icon(Icons.chevron_left), leftClick),
+          ElevatedButton(onPressed: step, child: Text("step()")),
+          roundButton(Icon(Icons.chevron_right), rightClick),
+          IconButton(
+              icon: running ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+              onPressed: playPause)
         ],
       ),
     );
