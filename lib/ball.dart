@@ -50,8 +50,7 @@ class _BallGameState extends State<BallGame> {
               screen(),
               gameControlButtons(),
             ],
-          )
-      ),
+          )),
     );
   }
 
@@ -67,7 +66,6 @@ class _BallGameState extends State<BallGame> {
           borderRadius: BorderRadius.circular(20),
         ),
         padding: EdgeInsets.all(20),
-
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -143,7 +141,12 @@ class _BallGameState extends State<BallGame> {
   Widget arc(int size, int ballPos, [bool reflected]) {
     var stencils = <Widget>[];
     for (int i = 0; i < size; i++) {
-      stencils.add(ballStencil(i == ballPos, reflected));
+      stencils.add(Transform.translate(
+        offset: Offset(
+            0,
+            pow((i.toDouble() - size.toDouble() / 2.0 + 0.5), 2)) * 3.5,
+        child: ballStencil(i == ballPos, reflected),
+      ));
     }
     return Row(
       children: stencils,
@@ -199,7 +202,6 @@ class _BallGameState extends State<BallGame> {
       style: ElevatedButton.styleFrom(
         primary: Colors.red,
       ),
-
     );
 
     // return Container(
