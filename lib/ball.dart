@@ -77,39 +77,39 @@ class _BallGameState extends State<BallGame> {
               children: [
                 Column(
                   children: [
-                    hand(handPos == 0),
-                    ballStencil(ballPos0 == -1),
+                    lcdHand(active: handPos == 0),
+                    lcdBall(active: ballPos0 == -1),
                   ],
                 ),
                 Column(
                   children: [
-                    hand(handPos == 1),
-                    ballStencil(ballPos1 == -1),
+                    lcdHand(active: handPos == 1),
+                    lcdBall(active: ballPos1 == -1),
                   ],
                 ),
                 Column(
                   children: [
-                    hand(handPos == 2),
-                    ballStencil(ballPos2 == -1),
+                    lcdHand(active: handPos == 2),
+                    lcdBall(active: ballPos2 == -1),
                   ],
                 ),
                 SizedBox(width: (30 * (arc2size - 2)).toDouble()),
                 Column(
                   children: [
-                    hand(handPos == 0),
-                    ballStencil(ballPos2 == arc2size),
+                    lcdHand(active: handPos == 0),
+                    lcdBall(active: ballPos2 == arc2size),
                   ],
                 ),
                 Column(
                   children: [
-                    hand(handPos == 1),
-                    ballStencil(ballPos1 == arc1size),
+                    lcdHand(active: handPos == 1),
+                    lcdBall(active: ballPos1 == arc1size),
                   ],
                 ),
                 Column(
                   children: [
-                    hand(handPos == 2),
-                    ballStencil(ballPos0 == arc0size),
+                    lcdHand(active: handPos == 2),
+                    lcdBall(active: ballPos0 == arc0size),
                   ],
                 ),
               ],
@@ -166,45 +166,54 @@ class _BallGameState extends State<BallGame> {
         offset: Offset(
             0,
             pow((i.toDouble() - size.toDouble() / 2.0 + 0.5), 2) * 3.2),
-        child: ballStencil(i == ballPos, reflected),
-      ));
+        child: lcdSegment(
+            child: (color) => ballStencil(color: color),
+            active: i == ballPos
+          ),
+      )
+      );
     }
     return Row(
       children: stencils,
     );
   }
 
-  // Widget lcdSegment({required Widget Function(Color) child}) {
-  //   return child(Colors.purple);
-  // }
+  Widget lcdSegment({required Widget Function(Color) child, required bool active}) {
+    if (active) {
+      return Stack(
+        children: [
+          child(Colors.grey.withOpacity(0.5)),
+          Positioned(
+              top: -2,
+              left: 2,
+              child: child(Colors.black.withOpacity(0.75))
+          )
+        ],
+      );
+    } else {
+      return child(Colors.grey.withOpacity(0.5));
+    }
+  }
 
-  Widget hand(bool active) {
+  Widget lcdHand({required bool active}) {
+    return lcdSegment(child: (c) => handStencil(color: c), active: active);
+  }
+
+  Widget lcdBall({required bool active}) {
+    return lcdSegment(child: (c) => ballStencil(color: c), active: active);
+  }
+
+  Widget handStencil({required Color color}) {
     return Container(
       width: 20,
       height: 10,
-      color: active ? Colors.black : Colors.grey,
+      color: color,
       margin: EdgeInsets.all(5),
     );
   }
 
-  Widget ballStencil(bool active, [bool? reflected]) {
-    Color color;
-    if (active) {
-      if (reflected != null) {
-        if (reflected) {
-          color = Colors.green;
-        } else {
-          color = Colors.red;
-        }
-      } else {
-        color = Colors.black;
-      }
-    } else {
-      color = Colors.grey;
-    }
-
+  Widget ballStencil({required Color color}) {
     return Container(
-      // color:
       width: 20,
       height: 20,
       decoration: BoxDecoration(
@@ -213,10 +222,6 @@ class _BallGameState extends State<BallGame> {
       ),
       margin: EdgeInsets.all(5),
     );
-
-    //   active ?
-    // Text("O") :
-    // Text("-");
   }
 
   Widget roundButton(Icon icon, VoidCallback onPressed) {
