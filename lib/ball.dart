@@ -159,13 +159,13 @@ class _BallGameState extends State<BallGame> {
     );
   }
 
-  Widget arc(int size, int ballPos, [bool reflected]) {
+  Widget arc(int size, int ballPos, [bool? reflected]) {
     var stencils = <Widget>[];
     for (int i = 0; i < size; i++) {
       stencils.add(Transform.translate(
         offset: Offset(
             0,
-            pow((i.toDouble() - size.toDouble() / 2.0 + 0.5), 2)) * 3.2,
+            pow((i.toDouble() - size.toDouble() / 2.0 + 0.5), 2) * 3.2),
         child: ballStencil(i == ballPos, reflected),
       ));
     }
@@ -173,6 +173,10 @@ class _BallGameState extends State<BallGame> {
       children: stencils,
     );
   }
+
+  // Widget lcdSegment({required Widget Function(Color) child}) {
+  //   return child(Colors.purple);
+  // }
 
   Widget hand(bool active) {
     return Container(
@@ -183,7 +187,7 @@ class _BallGameState extends State<BallGame> {
     );
   }
 
-  Widget ballStencil(bool active, [bool reflected]) {
+  Widget ballStencil(bool active, [bool? reflected]) {
     Color color;
     if (active) {
       if (reflected != null) {
@@ -371,7 +375,7 @@ class _BallGameState extends State<BallGame> {
     }
   }
 
-  void initializeGame([int seed]) {
+  void initializeGame([int? seed]) {
     final random = Random(seed);
     setState(() {
       ballPos0 = random.nextInt(arc0size - 4) + 2;
