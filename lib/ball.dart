@@ -66,57 +66,56 @@ class _BallGameState extends State<BallGame> {
           borderRadius: BorderRadius.circular(20),
         ),
         padding: EdgeInsets.all(20),
-        child: Row(
+
+        child: Column(
           mainAxisSize: MainAxisSize.min,
+
           children: [
-            Column(
+            arcs(),
+            SizedBox(height: pow(((arc2size - 2) / 2.0 + 0.5), 2) * 3.2),
+            Row( // row of hands and ball stencils
               children: [
-                ballStencil(ballPos0 == -1),
-                ballStencil(ballPos1 == -1),
-                ballStencil(ballPos2 == -1),
-              ],
-            ),
-            Column(
-              children: [
-                hand(handPos == 0),
-                hand(handPos == 1),
-                hand(handPos == 2),
-              ],
-            ),
-            Column(
-              children: [
-                arc(
-                  arc0size,
-                  ballPos0,
-                  // reflected0
+                Column(
+                  children: [
+                    hand(handPos == 0),
+                    ballStencil(ballPos0 == -1),
+                  ],
                 ),
-                arc(
-                  arc1size,
-                  ballPos1,
-                  // reflected1
+                Column(
+                  children: [
+                    hand(handPos == 1),
+                    ballStencil(ballPos1 == -1),
+                  ],
                 ),
-                arc(
-                  arc2size,
-                  ballPos2,
-                  // reflected2
-                )
+                Column(
+                  children: [
+                    hand(handPos == 2),
+                    ballStencil(ballPos2 == -1),
+                  ],
+                ),
+                SizedBox(width: (30 * (arc2size - 2)).toDouble()),
+                Column(
+                  children: [
+                    hand(handPos == 0),
+                    ballStencil(ballPos2 == arc2size),
+                  ],
+                ),
+                Column(
+                  children: [
+                    hand(handPos == 1),
+                    ballStencil(ballPos1 == arc1size),
+                  ],
+                ),
+                Column(
+                  children: [
+                    hand(handPos == 2),
+                    ballStencil(ballPos0 == arc0size),
+                  ],
+                ),
               ],
-            ),
-            Column(
-              children: [
-                hand(handPos == 0),
-                hand(handPos == 1),
-                hand(handPos == 2),
-              ],
-            ),
-            Column(
-              children: [
-                ballStencil(ballPos0 == arc0size),
-                ballStencil(ballPos1 == arc1size),
-                ballStencil(ballPos2 == arc2size),
-              ],
-            ),
+            ), // row of hands and ball stencils
           ],
+
         ),
       ),
     );
@@ -138,13 +137,35 @@ class _BallGameState extends State<BallGame> {
     );
   }
 
+  Widget arcs() {
+    return Column(
+      children: [
+        arc(
+          arc0size,
+          ballPos0,
+          // reflected0
+        ),
+        arc(
+          arc1size,
+          ballPos1,
+          // reflected1
+        ),
+        arc(
+          arc2size,
+          ballPos2,
+          // reflected2
+        )
+      ],
+    );
+  }
+
   Widget arc(int size, int ballPos, [bool reflected]) {
     var stencils = <Widget>[];
     for (int i = 0; i < size; i++) {
       stencils.add(Transform.translate(
         offset: Offset(
             0,
-            pow((i.toDouble() - size.toDouble() / 2.0 + 0.5), 2)) * 3.5,
+            pow((i.toDouble() - size.toDouble() / 2.0 + 0.5), 2)) * 3.2,
         child: ballStencil(i == ballPos, reflected),
       ));
     }
@@ -155,12 +176,11 @@ class _BallGameState extends State<BallGame> {
 
   Widget hand(bool active) {
     return Container(
-      width: 10,
-      height: 20,
+      width: 20,
+      height: 10,
       color: active ? Colors.black : Colors.grey,
       margin: EdgeInsets.all(5),
     );
-    // return Text(active ? '||||' : '|  |');
   }
 
   Widget ballStencil(bool active, [bool reflected]) {
@@ -275,16 +295,19 @@ class _BallGameState extends State<BallGame> {
         running = false;
       });
     }
+    setState(() {
+      reflected0 = handPos == 0;
+      reflected1 = handPos == 1;
+      reflected2 = handPos == 2;
+    });
   }
 
   void stepBall0() {
     setState(() {
-      if (reflected0) {
-        if (ballPos0 == 0 && ballDir0 == _Direction.LEFT) {
-          ballDir0 = _Direction.RIGHT;
-        } else if (ballPos0 == arc0size - 1 && ballDir0 == _Direction.RIGHT) {
-          ballDir0 = _Direction.LEFT;
-        }
+      if (reflected0 && ballPos0 == 0 && ballDir0 == _Direction.LEFT) {
+        ballDir0 = _Direction.RIGHT;
+      } else if (reflected2 && ballPos0 == arc0size - 1 && ballDir0 == _Direction.RIGHT) {
+        ballDir0 = _Direction.LEFT;
       }
       switch (ballDir0) {
         case _Direction.LEFT:
@@ -296,7 +319,6 @@ class _BallGameState extends State<BallGame> {
         case _Direction.STOP:
           break;
       }
-      reflected0 = false;
     });
   }
 
@@ -319,19 +341,16 @@ class _BallGameState extends State<BallGame> {
         case _Direction.STOP:
           break;
       }
-      reflected1 = false;
     });
   }
 
   void stepBall2() {
     setState(() {
-      if (reflected2) {
-        if (ballPos2 == 0 && ballDir2 == _Direction.LEFT) {
+        if (reflected2 && ballPos2 == 0 && ballDir2 == _Direction.LEFT) {
           ballDir2 = _Direction.RIGHT;
-        } else if (ballPos2 == arc2size - 1 && ballDir2 == _Direction.RIGHT) {
+        } else if (reflected0 && ballPos2 == arc2size - 1 && ballDir2 == _Direction.RIGHT) {
           ballDir2 = _Direction.LEFT;
         }
-      }
       switch (ballDir2) {
         case _Direction.LEFT:
           ballPos2--;
@@ -342,14 +361,13 @@ class _BallGameState extends State<BallGame> {
         case _Direction.STOP:
           break;
       }
-      reflected2 = false;
     });
   }
 
   Future<void> autoStepper() async {
     while (running) {
-      await Future.delayed(Duration(seconds: 1));
       step();
+      await Future.delayed(Duration(seconds: 1));
     }
   }
 
