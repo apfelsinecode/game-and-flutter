@@ -20,8 +20,8 @@ class _BallGameState extends State<BallGame> {
   final arc1size = 10;
   final arc2size = 8;
 
-  final Color _lcdOffColor = Colors.grey.withOpacity(0.5);
-  final Color _lcdOnColor = Colors.black.withOpacity(0.75);
+  final Color _lcdOffColor = Colors.grey.withOpacity(0.25);
+  final Color _lcdOnColor = Colors.black.withOpacity(0.85);
   final double _lcdOffset = 2;
 
   int ballPos0 = 2;
@@ -207,7 +207,7 @@ class _BallGameState extends State<BallGame> {
         ],
       );
     } else {
-      return child(Colors.grey.withOpacity(0.5));
+      return child(_lcdOffColor);
     }
   }
 
@@ -243,18 +243,17 @@ class _BallGameState extends State<BallGame> {
   Widget lcdScoreDisplay({required int score, int digits = 3}) {
     return Stack(
       children: [
-        // scoreDisplay(value: "", digits: digits),
-        Positioned(
-          top: 0, // -_lcdOffset,
-          left: -20, // _lcdOffset,
+        scoreDisplay(value: "", digits: digits, disabledColor: _lcdOffColor),
+        Transform.translate(
+          offset: Offset(_lcdOffset, -_lcdOffset),
+          // child: SelectableText(score.toString().padLeft(digits)),
           child: scoreDisplay(
             value: score.toString(),
             digits: digits,
-            enabledColor: Colors.black // _lcdOnColor,
+            enabledColor: _lcdOnColor,
           ),
         )
       ],
-
     );
   }
   
@@ -268,7 +267,7 @@ class _BallGameState extends State<BallGame> {
       value: value,
       size: 4,
       characterCount: digits,
-      // backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent,
       segmentStyle: DefaultSegmentStyle(
         enabledColor: enabledColor,
         disabledColor: disabledColor,
