@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:segment_display/segment_display.dart';
 
 class BallGame extends StatefulWidget {
   @override
@@ -12,11 +13,16 @@ class BallGame extends StatefulWidget {
 enum _Direction { LEFT, RIGHT, STOP }
 
 class _BallGameState extends State<BallGame> {
-  bool running = false;
+  bool _running = false;
+  int _score = 0;
 
   final arc0size = 12;
   final arc1size = 10;
   final arc2size = 8;
+
+  final Color _lcdOffColor = Colors.grey.withOpacity(0.5);
+  final Color _lcdOnColor = Colors.black.withOpacity(0.75);
+  final double _lcdOffset = 2;
 
   int ballPos0 = 2;
   int ballPos1 = 2;
@@ -56,67 +62,77 @@ class _BallGameState extends State<BallGame> {
 
   Widget screen() {
     return FittedBox(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.lightGreenAccent,
-          border: Border.all(
-            color: Colors.black,
-            width: 4,
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: EdgeInsets.all(20),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.lightGreenAccent,
+              border: Border.all(
+                color: Colors.black,
+                width: 4,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: EdgeInsets.all(20),
 
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
 
-          children: [
-            arcs(),
-            SizedBox(height: pow(((arc2size - 2) / 2.0 + 0.5), 2) * 3.2),
-            Row( // row of hands and ball stencils
               children: [
-                Column(
+                arcs(),
+                SizedBox(height: pow(((arc2size - 2) / 2.0 + 0.5), 2) * 3.2),
+                Row( // row of hands and ball stencils
                   children: [
-                    lcdHand(active: handPos == 0),
-                    lcdBall(active: ballPos0 == -1),
+                    Column(
+                      children: [
+                        lcdHand(active: handPos == 0),
+                        lcdBall(active: ballPos0 == -1),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        lcdHand(active: handPos == 1),
+                        lcdBall(active: ballPos1 == -1),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        lcdHand(active: handPos == 2),
+                        lcdBall(active: ballPos2 == -1),
+                      ],
+                    ),
+                    SizedBox(width: (30 * (arc2size - 2)).toDouble()),
+                    Column(
+                      children: [
+                        lcdHand(active: handPos == 0),
+                        lcdBall(active: ballPos2 == arc2size),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        lcdHand(active: handPos == 1),
+                        lcdBall(active: ballPos1 == arc1size),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        lcdHand(active: handPos == 2),
+                        lcdBall(active: ballPos0 == arc0size),
+                      ],
+                    ),
                   ],
-                ),
-                Column(
-                  children: [
-                    lcdHand(active: handPos == 1),
-                    lcdBall(active: ballPos1 == -1),
-                  ],
-                ),
-                Column(
-                  children: [
-                    lcdHand(active: handPos == 2),
-                    lcdBall(active: ballPos2 == -1),
-                  ],
-                ),
-                SizedBox(width: (30 * (arc2size - 2)).toDouble()),
-                Column(
-                  children: [
-                    lcdHand(active: handPos == 0),
-                    lcdBall(active: ballPos2 == arc2size),
-                  ],
-                ),
-                Column(
-                  children: [
-                    lcdHand(active: handPos == 1),
-                    lcdBall(active: ballPos1 == arc1size),
-                  ],
-                ),
-                Column(
-                  children: [
-                    lcdHand(active: handPos == 2),
-                    lcdBall(active: ballPos0 == arc0size),
-                  ],
-                ),
+                ), // row of hands and ball stencils
               ],
-            ), // row of hands and ball stencils
-          ],
 
-        ),
+            ),
+          ),
+
+          Positioned(
+            top: 10,
+            left: 10,
+            child: lcdScoreDisplay(score: _score),
+          ),
+        ], // children
       ),
     );
   }
@@ -127,11 +143,11 @@ class _BallGameState extends State<BallGame> {
         mainAxisSize: MainAxisSize.min,
         children: [
           roundButton(Icon(Icons.chevron_left), leftClick),
-          ElevatedButton(onPressed: step, child: Text("step()")),
           roundButton(Icon(Icons.chevron_right), rightClick),
           IconButton(
-              icon: running ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-              onPressed: playPause)
+              icon: _running ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+              onPressed: playPause),
+          ElevatedButton(onPressed: step, child: Text("step()")),
         ],
       ),
     );
@@ -182,11 +198,11 @@ class _BallGameState extends State<BallGame> {
     if (active) {
       return Stack(
         children: [
-          child(Colors.grey.withOpacity(0.5)),
+          child(_lcdOffColor),
           Positioned(
-              top: -2,
-              left: 2,
-              child: child(Colors.black.withOpacity(0.75))
+              top: -_lcdOffset,
+              left: _lcdOffset,
+              child: child(_lcdOnColor)
           )
         ],
       );
@@ -221,6 +237,42 @@ class _BallGameState extends State<BallGame> {
         color: color,
       ),
       margin: EdgeInsets.all(5),
+    );
+  }
+
+  Widget lcdScoreDisplay({required int score, int digits = 3}) {
+    return Stack(
+      children: [
+        // scoreDisplay(value: "", digits: digits),
+        Positioned(
+          top: 0, // -_lcdOffset,
+          left: -20, // _lcdOffset,
+          child: scoreDisplay(
+            value: score.toString(),
+            digits: digits,
+            enabledColor: Colors.black // _lcdOnColor,
+          ),
+        )
+      ],
+
+    );
+  }
+  
+  Widget scoreDisplay({
+    required String value,
+    int digits = 3,
+    Color? enabledColor,
+    Color disabledColor = Colors.transparent,
+  }) {
+    return SevenSegmentDisplay(
+      value: value,
+      size: 4,
+      characterCount: digits,
+      // backgroundColor: Colors.transparent,
+      segmentStyle: DefaultSegmentStyle(
+        enabledColor: enabledColor,
+        disabledColor: disabledColor,
+      ),
     );
   }
 
@@ -267,9 +319,9 @@ class _BallGameState extends State<BallGame> {
 
   void playPause() {
     setState(() {
-      running = !running;
+      _running = !_running;
     });
-    if (running) {
+    if (_running) {
       if (checkLost()) {
         initializeGame();
       }
@@ -301,7 +353,7 @@ class _BallGameState extends State<BallGame> {
     stepBall2();
     if (checkLost()) {
       setState(() {
-        running = false;
+        _running = false;
       });
     }
     setState(() {
@@ -315,8 +367,10 @@ class _BallGameState extends State<BallGame> {
     setState(() {
       if (reflected0 && ballPos0 == 0 && ballDir0 == _Direction.LEFT) {
         ballDir0 = _Direction.RIGHT;
+        _score++;
       } else if (reflected2 && ballPos0 == arc0size - 1 && ballDir0 == _Direction.RIGHT) {
         ballDir0 = _Direction.LEFT;
+        _score++;
       }
       switch (ballDir0) {
         case _Direction.LEFT:
@@ -336,8 +390,10 @@ class _BallGameState extends State<BallGame> {
       if (reflected1) {
         if (ballPos1 == 0 && ballDir1 == _Direction.LEFT) {
           ballDir1 = _Direction.RIGHT;
+          _score++;
         } else if (ballPos1 == arc1size - 1 && ballDir1 == _Direction.RIGHT) {
           ballDir1 = _Direction.LEFT;
+          _score++;
         }
       }
       switch (ballDir1) {
@@ -357,8 +413,10 @@ class _BallGameState extends State<BallGame> {
     setState(() {
         if (reflected2 && ballPos2 == 0 && ballDir2 == _Direction.LEFT) {
           ballDir2 = _Direction.RIGHT;
+          _score++;
         } else if (reflected0 && ballPos2 == arc2size - 1 && ballDir2 == _Direction.RIGHT) {
           ballDir2 = _Direction.LEFT;
+          _score++;
         }
       switch (ballDir2) {
         case _Direction.LEFT:
@@ -374,7 +432,7 @@ class _BallGameState extends State<BallGame> {
   }
 
   Future<void> autoStepper() async {
-    while (running) {
+    while (_running) {
       step();
       await Future.delayed(Duration(seconds: 1));
     }
@@ -389,6 +447,7 @@ class _BallGameState extends State<BallGame> {
       ballDir0 = random.nextBool() ? _Direction.LEFT : _Direction.RIGHT;
       ballDir1 = random.nextBool() ? _Direction.LEFT : _Direction.RIGHT;
       ballDir2 = random.nextBool() ? _Direction.LEFT : _Direction.RIGHT;
+      _score = 0;
       // running = true;
     });
   }
