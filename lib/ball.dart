@@ -199,7 +199,7 @@ class _BallGameState extends State<BallGame> {
       return Stack(
         children: [
           child(_lcdOffColor),
-          Positioned(
+          /*if(active) */ Positioned(
               top: -_lcdOffset,
               left: _lcdOffset,
               child: child(_lcdOnColor)
