@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 
 class Tile2048 extends StatelessWidget {
   final int exponent;
-  // static final double size = 0;
+  final double size = 50;
+  final double borderRadius = 10;
 
   Tile2048({required this.exponent}) ;
   
@@ -14,13 +15,16 @@ class Tile2048 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 50,
-      height: 50,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
-
+        borderRadius: BorderRadius.circular(borderRadius),
         color: Colors.accents[min(exponent, 15)]
       ),
-      child: Text(value.toString() + " ")
+      child: FittedBox(
+        child: Text(value.toString() + " "),
+        fit: BoxFit.scaleDown,
+      )
     );
   }
 }
