@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class Tile2048 extends StatelessWidget {
   final int exponent;
-  final double size = 50;
+  final double size = 100;
   final double borderRadius = 10;
 
   Tile2048({required this.exponent}) ;
