@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:game_and_flutter/game2048/Game2048Model.dart';
 import 'package:game_and_flutter/game2048/Grid2048.dart';
 
 
@@ -10,7 +11,9 @@ class Game2048 extends StatefulWidget {
 
 class _Game2048State extends State<Game2048> {
 
-  final _grid = Grid2048();
+  //final _gameModel = ;
+
+  final _grid = Grid2048(Game2048Model.fromSize(width: 4, height: 4));
 
 
   @override

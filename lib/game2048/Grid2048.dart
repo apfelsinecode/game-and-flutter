@@ -3,47 +3,37 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:game_and_flutter/game2048/Tile2048.dart';
 
+import 'Game2048Model.dart';
+
 class Grid2048 extends StatefulWidget {
-  final int width;
-  final int height;
   final double _tilePadding = 10;
+  final Game2048Model game2048model;
   
-  Grid2048({this.width = 4, this.height = 4});
+  Grid2048(this.game2048model);
   
   @override
   _Grid2048State createState()
-  => _Grid2048State.fromSize(width, height);
+  => _Grid2048State(game2048model);
 
 }
 
 class _Grid2048State extends State<Grid2048> {
 
-  /// y, x
-  final List<List<int>> gridValues;
+  final Game2048Model model;
 
-  // final Game2048Model model;
-  final int width;
-  final int height;
+  int get width => model.width;
+  int get height => model.height;
 
-  _Grid2048State(this.gridValues, this.width,
-      this.height);
-  // int get width => model.width;
-  // int get height => model.height;
-
-  // _Grid2048State(this.model);
+  _Grid2048State(this.model);
 
 
-
-  _Grid2048State.fromSize(int width, int height)
-      : this(List.generate(height, (index) => List.filled(width, 0)), width,
-            height);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (var row in gridValues)
+        for (var row in model.gridValues)
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -58,18 +48,6 @@ class _Grid2048State extends State<Grid2048> {
     );
   }
 
-  /// value 2 -> exponent 1
-  bool spawn2({int? x, int? y}) {
-    if (x == null) {
-      x = Random().nextInt(width);
-    }
-    if (y == null) {
-      y = Random().nextInt(height);
-    }
-    setState(() {
-      gridValues[y!][x!] = 1;
-    });
-    return false;
-  }
+
 
 }
