@@ -38,6 +38,7 @@ class _BallGameState extends State<BallGame> {
 
   var handPos = 0;
 
+
   @override
   Widget build(BuildContext context) {
     // initializeGame();
@@ -284,18 +285,6 @@ class _BallGameState extends State<BallGame> {
       ),
     );
 
-    // return Container(
-    //   decoration: BoxDecoration(
-    //     shape: BoxShape.circle,
-    //
-    //   ),
-    //   child: IconButton(
-    //     icon: icon,
-    //     onPressed: onPressed,
-    //     color: Colors.blue,
-    //     disabledColor: Colors.red,
-    //   ),
-    // );
   }
 
   void leftClick() {
@@ -433,7 +422,8 @@ class _BallGameState extends State<BallGame> {
   Future<void> autoStepper() async {
     while (_running) {
       step();
-      await Future.delayed(Duration(seconds: 1));
+      int ms = max(1000 - 5 * _score, 150);
+      await Future.delayed(Duration(milliseconds: ms));
     }
   }
 
