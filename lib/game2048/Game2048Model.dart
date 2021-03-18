@@ -1,7 +1,9 @@
 
 import 'dart:math';
 
-class Game2048Model {
+import 'package:flutter/material.dart';
+
+class Game2048Model extends ChangeNotifier{
 
   /// y, x
   final List<List<int>> gridValues;
@@ -22,10 +24,34 @@ class Game2048Model {
     if (y == null) {
       y = Random().nextInt(height);
     }
-    // setState(() {
-      gridValues[y][x] = 1;
-    // });
-    return false;
+
+    gridValues[y][x] = 1;
+    notifyListeners();
+
+    return true;
+  }
+
+  /// set all values to 0
+  void reset() {
+    gridValues.forEach((sub) {sub.fillRange(0, sub.length, 0);});
+    notifyListeners();
+  }
+
+
+  void moveUp() {
+    print("up");
+  }
+
+  void moveLeft() {
+    print("left");
+  }
+
+  void moveRight() {
+    print("right");
+  }
+
+  void moveDown() {
+    print("down");
   }
 
 
