@@ -14,7 +14,8 @@ class Tile2048 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 100),
       width: size,
       height: size,
       decoration: BoxDecoration(

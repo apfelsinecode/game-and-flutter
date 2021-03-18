@@ -81,7 +81,7 @@ class Controls2048 extends StatelessWidget {
   }
 
   void onA(BuildContext context) {
-    Provider.of<Game2048Model>(context, listen: false).spawn2();
+    Provider.of<Game2048Model>(context, listen: false).spawn2or4();
     // _gameModel.spawn2();
   }
   void onB(BuildContext context) {
