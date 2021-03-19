@@ -62,7 +62,6 @@ class Game2048Model extends ChangeNotifier{
       final random = Random();
       int rndIdx = random.nextInt(emptyFields.length);
       final point = emptyFields[rndIdx];
-      print(point);
       _setValue(x: point.x, y: point.y, value: random.nextBool() ? 1 : 2);
       notifyListeners();
       return true;
@@ -92,5 +91,13 @@ class Game2048Model extends ChangeNotifier{
     print("down");
   }
 
+
+}
+class _TileMove {
+  final Point from;
+  final Point to;
+  final int exponent;
+
+  _TileMove({required this.from, required this.to, required this.exponent});
 
 }

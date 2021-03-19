@@ -14,18 +14,36 @@ class Tile2048 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 100),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        backgroundTile(),
+        AnimatedContainer(
+            duration: Duration(milliseconds: 100),
+            curve: Curves.easeOut,
+            width: ((exponent == 0) ? 0 : size),
+            height: ((exponent == 0) ? 0 : size),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(borderRadius),
+                color: exponent == 0 ? Colors.transparent : Colors.accents[min(exponent, 15)]
+            ),
+            child: FittedBox(
+              child: Text(exponent == 0 ? " " : value.toString()),
+              fit: BoxFit.scaleDown,
+            )
+        ),
+      ],
+    );
+  }
+
+  Widget backgroundTile() {
+    return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
-        color: Colors.accents[min(exponent, 15)]
+        color: Colors.brown.shade300,
       ),
-      child: FittedBox(
-        child: Text(value.toString() + " "),
-        fit: BoxFit.scaleDown,
-      )
     );
   }
 }
