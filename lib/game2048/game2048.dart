@@ -28,11 +28,13 @@ class _Game2048State extends State<Game2048> {
             mainAxisSize: MainAxisSize.min,
 
             children: [
-              // _grid,
-              Consumer<Game2048Model>(
-                builder: (context, gameModel, child) {
-                  return Grid2048(gameModel);
-                },
+
+              FittedBox(
+                child: Consumer<Game2048Model>(
+                  builder: (context, gameModel, child) {
+                    return Grid2048(gameModel);
+                  },
+                ),
               ),
               FittedBox(
                 child: controlButtonRow(),
