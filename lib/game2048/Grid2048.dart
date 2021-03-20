@@ -56,6 +56,7 @@ class _Grid2048State extends State<Grid2048> {
     return model.tileModels.map((tile) =>
       AnimatedPositioned(
         duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOutCubic,
         left: _leftOffset(tile.xPos),
         top: _topOffset(tile.yPos),
         child: Tile2048(exponent: tile.exponent),

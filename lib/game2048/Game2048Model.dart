@@ -20,25 +20,6 @@ class Game2048Model extends ChangeNotifier{
     : this(List.generate(height, (index) => List.filled(width, 0)),
       width, height);
 
-  /// value 2 -> exponent 1
-  bool spawn2Old({int? x, int? y}) {
-    if (x == null) {
-      x = Random().nextInt(width);
-    }
-    if (y == null) {
-      y = Random().nextInt(height);
-    }
-
-    gridValues[y][x] = 1;
-    notifyListeners();
-
-    return true;
-  }
-
-  @deprecated
-  int _getValueOld(int x, int y) {
-    return gridValues[y][x];
-  }
 
   @deprecated
   void _setValueOld({required int x, required int y, required int value}) {
@@ -80,29 +61,6 @@ class Game2048Model extends ChangeNotifier{
     }
   }
 
-  @deprecated
-  bool spawn2or4Old() {
-    final emptyFields = coordinates()
-      .where((xy) => _getValueOld(xy.x, xy.y) == 0)
-      .toList(growable: false);
-    if (emptyFields.isEmpty) {
-      return false; // no more empty space
-    } else {
-      final random = Random();
-      int rndIdx = random.nextInt(emptyFields.length);
-      final point = emptyFields[rndIdx];
-      _setValueOld(x: point.x, y: point.y, value: random.nextBool() ? 1 : 2);
-      notifyListeners();
-      return true;
-    }
-  }
-
-  /// set all values to 0
-  @deprecated
-  void resetOld() {
-    gridValues.forEach((sub) {sub.fillRange(0, sub.length, 0);});
-    notifyListeners();
-  }
 
   /// remove all tiles
   void reset() {
@@ -110,6 +68,20 @@ class Game2048Model extends ChangeNotifier{
     notifyListeners();
   }
 
+  void testAnimation() async {
+    final tileModel = _TileModel.fromXY(exponent: 4, xPos: 0, yPos: 0);
+    tileModels.add(tileModel);
+    notifyListeners();
+    await Future.delayed(Duration(seconds: 2));
+    tileModel.xPos = 3;
+    notifyListeners();
+    await Future.delayed(Duration(seconds: 2));
+    tileModel.yPos = 2;
+    notifyListeners();
+    await Future.delayed(Duration(seconds: 2));
+    tileModel.pos = Point(1, 1);
+    notifyListeners();
+  }
 
   void moveUp() {
     print("up");
@@ -148,6 +120,7 @@ class _TileModel {
   set yPos(int newY) => pos = Point(xPos, newY);
 
   _TileModel({required this.exponent, required this.pos});
-  // _TileModel.fromXY({required this.exponent, required this.xPos, required this.yPos});
+  _TileModel.fromXY({required exponent, required xPos, required yPos})
+    : this(exponent: exponent, pos: Point(xPos, yPos));
 
 }
