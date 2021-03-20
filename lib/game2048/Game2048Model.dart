@@ -6,18 +6,22 @@ import 'package:flutter/material.dart';
 class Game2048Model extends ChangeNotifier{
 
   /// y, x
+  @deprecated
   final List<List<int>> gridValues;
   final int width;
   final int height;
 
-  Game2048Model(this.gridValues,  this.width, this.height,);
+  final List<_TileModel> tileModels;
+
+  Game2048Model(this.gridValues,  this.width, this.height,)
+      : tileModels = <_TileModel>[];
 
   Game2048Model.fromSize({required int width, required int height})
     : this(List.generate(height, (index) => List.filled(width, 0)),
       width, height);
 
   /// value 2 -> exponent 1
-  bool spawn2({int? x, int? y}) {
+  bool spawn2Old({int? x, int? y}) {
     if (x == null) {
       x = Random().nextInt(width);
     }
@@ -31,11 +35,13 @@ class Game2048Model extends ChangeNotifier{
     return true;
   }
 
-  int _getValue(int x, int y) {
+  @deprecated
+  int _getValueOld(int x, int y) {
     return gridValues[y][x];
   }
 
-  void _setValue({required int x, required int y, required int value}) {
+  @deprecated
+  void _setValueOld({required int x, required int y, required int value}) {
     if (0 <= x && x < width && 0 <= y && y < height && value >= 0) {
       gridValues[y][x] = value;
     } else{
@@ -53,8 +59,32 @@ class Game2048Model extends ChangeNotifier{
   }
 
   bool spawn2or4() {
+    print("s24");
     final emptyFields = coordinates()
-      .where((xy) => _getValue(xy.x, xy.y) == 0)
+      .where((coord) =>
+          (!tileModels.any((tile) => tile.pos == coord))
+      )
+    .toList();
+    if (emptyFields.isEmpty) {
+      return false;
+    } else {
+      final random = Random();
+      int rndIdx = random.nextInt(emptyFields.length);
+      final coordinate = emptyFields[rndIdx];
+      tileModels.add(_TileModel(
+          exponent: random.nextBool() ? 1 : 2,
+          pos: coordinate,
+        )
+      );
+      notifyListeners();
+      return true;
+    }
+  }
+
+  @deprecated
+  bool spawn2or4Old() {
+    final emptyFields = coordinates()
+      .where((xy) => _getValueOld(xy.x, xy.y) == 0)
       .toList(growable: false);
     if (emptyFields.isEmpty) {
       return false; // no more empty space
@@ -62,15 +92,22 @@ class Game2048Model extends ChangeNotifier{
       final random = Random();
       int rndIdx = random.nextInt(emptyFields.length);
       final point = emptyFields[rndIdx];
-      _setValue(x: point.x, y: point.y, value: random.nextBool() ? 1 : 2);
+      _setValueOld(x: point.x, y: point.y, value: random.nextBool() ? 1 : 2);
       notifyListeners();
       return true;
     }
   }
 
   /// set all values to 0
-  void reset() {
+  @deprecated
+  void resetOld() {
     gridValues.forEach((sub) {sub.fillRange(0, sub.length, 0);});
+    notifyListeners();
+  }
+
+  /// remove all tiles
+  void reset() {
+    tileModels.clear();
     notifyListeners();
   }
 
@@ -99,5 +136,19 @@ class _TileMove {
   final int exponent;
 
   _TileMove({required this.from, required this.to, required this.exponent});
+
+}
+
+class _TileModel {
+  final int exponent;
+  Point<int> pos;
+
+  int get xPos => pos.x;
+  int get yPos => pos.y;
+  set xPos(int newX) => pos = Point(newX, yPos);
+  set yPos(int newY) => pos = Point(xPos, newY);
+
+  _TileModel({required this.exponent, required this.pos});
+  // _TileModel.fromXY({required this.exponent, required this.xPos, required this.yPos});
 
 }

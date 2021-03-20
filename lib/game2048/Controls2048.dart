@@ -57,8 +57,7 @@ class Controls2048 extends StatelessWidget {
           onPressed: () => onC(context),
           child: Text("C"),
           style: ElevatedButton.styleFrom(
-              primary: Colors.grey,
-              elevation: 0
+              primary: Colors.accents[3],
           ),
         ),
       ]
@@ -89,7 +88,9 @@ class Controls2048 extends StatelessWidget {
     //_gameModel.reset();
   }
   void onC(BuildContext context) {
-
+    onA(context);
+    // Provider.of<Game2048Model>(context).tileModels.forEach(print);
+    // print(Provider.of<Game2048Model>(context).tileModels);
   }
 
 }
