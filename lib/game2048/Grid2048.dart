@@ -6,7 +6,7 @@ import 'package:game_and_flutter/game2048/Tile2048.dart';
 import 'Game2048Model.dart';
 
 class Grid2048 extends StatefulWidget {
-  final double _tilePadding = 10;
+  static final double _tilePadding = 10;
   final Game2048Model game2048model;
   
   Grid2048(this.game2048model);
@@ -34,65 +34,47 @@ class _Grid2048State extends State<Grid2048> {
     return Stack(
       children: <Widget>[
 
-        /*Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var row in model.gridValues)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (var value in row)
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Tile2048(exponent: value),
-                    )
-                ],
-              )
-          ],
-        ),*/
         Container(
           child: SizedBox(
-            width: 500,
-            height: 500,
+            width: width * (Tile2048.size + Grid2048._tilePadding) + Grid2048._tilePadding,
+            height: height * (Tile2048.size + Grid2048._tilePadding) + Grid2048._tilePadding,
           ),
           decoration: BoxDecoration(
             color: Colors.brown,
             borderRadius: BorderRadius.circular(_borderRadius)
           ),
         ),
-
-        for (var e in tilesPositionedList()) e
+        for (var t in backgroundTilesPositionedList()) t,
+        for (var t in tilesPositionedList()) t,
       ]
     );
   }
 
-  /// A [Stack] of positiend tiles.
-  Widget tilesStack() {
-    final tiles = model.tileModels;
 
-    return Stack(
-      children: [
-        for (var tile in tiles) // {
-          /*Animated*/Positioned(
-            left: tile.xPos * 20,
-            top: tile.yPos * 20,
-            // duration: Duration(milliseconds: 500),
-            child: Tile2048(exponent: tile.exponent),
-          )
-        // }
-      ],
-    );
-  }
-
+  /// a list of positioned tiles
   Iterable<Widget> tilesPositionedList() {
     return model.tileModels.map((tile) =>
       AnimatedPositioned(
         duration: Duration(milliseconds: 500),
-        left: tile.xPos * (Tile2048.size + 10) + 10,
-        top: tile.yPos * (Tile2048.size + 10) + 10,
+        left: _leftOffset(tile.xPos),
+        top: _topOffset(tile.yPos),
         child: Tile2048(exponent: tile.exponent),
       )
     );
+  }
+  
+  double _leftOffset(int x) => x * (Tile2048.size + Grid2048._tilePadding) + Grid2048._tilePadding;
+  double _topOffset(int y) => _leftOffset(y);
+
+  Iterable<Widget> backgroundTilesPositionedList() {
+    return model
+        .coordinates()
+        .map((xy) =>
+        Positioned(
+            left: _leftOffset(xy.x),
+            top: _topOffset(xy.y),
+            child: BackgroundTile2048(),
+    ));
   }
 
 

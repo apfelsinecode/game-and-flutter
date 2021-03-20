@@ -59,7 +59,6 @@ class Game2048Model extends ChangeNotifier{
   }
 
   bool spawn2or4() {
-    print("s24");
     final emptyFields = coordinates()
       .where((coord) =>
           (!tileModels.any((tile) => tile.pos == coord))
