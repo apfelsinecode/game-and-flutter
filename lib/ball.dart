@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:segment_display/segment_display.dart';
 
 class BallGame extends StatefulWidget {
@@ -42,22 +43,27 @@ class _BallGameState extends State<BallGame> {
   @override
   Widget build(BuildContext context) {
     // initializeGame();
-    return Center(
-      child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      autofocus: true,
+      onKey: onKey,
+      child: Center(
+        child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+              ),
+              borderRadius: BorderRadius.circular(10),
             ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              screen(),
-              gameControlButtons(),
-            ],
-          )),
+            padding: EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                screen(),
+                gameControlButtons(),
+              ],
+            )),
+      ),
     );
   }
 
@@ -317,6 +323,22 @@ class _BallGameState extends State<BallGame> {
       autoStepper();
     } else {}
   }
+
+  void onKey(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      if (event.isKeyPressed(LogicalKeyboardKey.arrowLeft)
+        || event.physicalKey == PhysicalKeyboardKey.keyA) {
+        leftClick();
+      } else if(event.isKeyPressed(LogicalKeyboardKey.arrowRight)
+        || event.physicalKey == PhysicalKeyboardKey.keyD) {
+        rightClick();
+      } else if(event.isKeyPressed(LogicalKeyboardKey.space)
+        || event.isKeyPressed(LogicalKeyboardKey.escape)) {
+        playPause();
+      }
+    }
+  }
+
 
   void setReflectedAtHandPos() {
     setState(() {
