@@ -3,6 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+enum Direction {
+  UP, LEFT, RIGHT, DOWN
+}
+
 class Game2048Model extends ChangeNotifier{
 
   /// y, x
@@ -117,46 +121,87 @@ class Game2048Model extends ChangeNotifier{
     notifyListeners();
   }
 
-  void moveUp() {
-    print("up");
+  void move(Direction direction) {
+    bool change;
+    switch (direction) {
+      case Direction.UP:
+        change = _moveUp();
+        break;
+      case Direction.LEFT:
+        change = _moveLeft();
+        break;
+      case Direction.RIGHT:
+        change = _moveRight();
+        break;
+      case Direction.DOWN:
+        change = _moveDown();
+        break;
+    }
+    if (change) {
+      spawn2or4();
+      // check if game is winnable
+    }
+  }
+
+  /// return true iff any tile moved -> require new tile
+  bool _moveUp() {
+    bool change = false;
     for (var column in columnsFromTop()) {
       for (int i = 0; i < column.length; i++) {
-        column[i].yPos = i;
+        if (column[i].yPos != i) {
+          change = true;
+          column[i].yPos = i;
+        }
       }
     }
     notifyListeners();
+    return change;
   }
 
-  void moveLeft() {
-    print("left");
+  bool _moveLeft() {
+    bool change = false;
     for (var row in rowsFromLeft()) {
       for (int i = 0; i < row.length; i++) {
-        row[i].xPos = i;
+        if (row[i].xPos != i) {
+          change = true;
+          row[i].xPos = i;
+        }
       }
     }
     notifyListeners();
+    return change;
   }
 
-  void moveRight() {
-    print("right");
+  bool _moveRight() {
+    bool change = false;
     for (var row in rowsFromRight()) {
       int x = width - 1;
       for (int i = 0; i < row.length; i++) {
-        row[i].xPos = x--;
+        if (row[i].xPos != x) {
+          change = true;
+          row[i].xPos = x;
+        }
+        x--;
       }
     }
     notifyListeners();
+    return change;
   }
 
-  void moveDown() {
-    print("down");
+  bool _moveDown() {
+    bool change = false;
     for (var column in columnsFromBottom()) {
       int y = height - 1;
       for (int i = 0; i < column.length; i++) {
-        column[i].yPos = y--;
+        if (column[i].yPos != y){
+          change = true;
+          column[i].yPos = y;
+        }
+        y--;
       }
     }
     notifyListeners();
+    return change;
   }
 
 

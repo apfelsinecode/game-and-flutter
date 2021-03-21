@@ -65,18 +65,18 @@ class Controls2048 extends StatelessWidget {
   }
 
   void onLeft(BuildContext context) {
-    Provider.of<Game2048Model>(context, listen: false).moveLeft();
+    Provider.of<Game2048Model>(context, listen: false).move(Direction.LEFT);
   }
 
   void onRight(BuildContext context) {
-    Provider.of<Game2048Model>(context, listen: false).moveRight();
+    Provider.of<Game2048Model>(context, listen: false).move(Direction.RIGHT);
   }
   void onUp(BuildContext context) {
-    Provider.of<Game2048Model>(context, listen: false).moveUp();
+    Provider.of<Game2048Model>(context, listen: false).move(Direction.UP);
   }
 
   void onDown(BuildContext context) {
-    Provider.of<Game2048Model>(context, listen: false).moveDown();
+    Provider.of<Game2048Model>(context, listen: false).move(Direction.DOWN);
   }
 
   void onA(BuildContext context) {
