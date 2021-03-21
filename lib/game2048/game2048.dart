@@ -50,9 +50,7 @@ class _Game2048State extends State<Game2048> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Controls2048(onLeft, onUp, onDown, onRight),
         Controls2048(),
-
       ],
     );
   }
