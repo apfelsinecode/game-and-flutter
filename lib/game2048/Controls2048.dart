@@ -88,8 +88,8 @@ class Controls2048 extends StatelessWidget {
     //_gameModel.reset();
   }
   void onC(BuildContext context) {
-    final gameModel = Provider.of<Game2048Model>(context, listen: false);
-    gameModel.testAnimation();
+    // final gameModel = Provider.of<Game2048Model>(context, listen: false);
+    print("C");
     // Provider.of<Game2048Model>(context).tileModels.forEach(print);
     // print(Provider.of<Game2048Model>(context).tileModels);
   }

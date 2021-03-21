@@ -61,6 +61,55 @@ class Game2048Model extends ChangeNotifier{
     }
   }
 
+  /// grid:
+  ///
+  /// 1234
+  /// 5678
+  /// 9abc
+  /// defg
+  /// result: [[159d],[26ae],[37bf][48cg]]
+  ///
+  Iterable<List<_TileModel>> columnsFromTop() sync* {
+      for (int x = 0; x < width; x++) {
+        List<_TileModel> column = <_TileModel>[];
+        for (int y = 0; y < height; y++) {
+          try {
+            column.add(tileModels
+                .where((tile) => tile.xPos == x && tile.yPos == y)
+                .first);
+          } on StateError {
+            // next coordinate
+          }
+        }
+        yield column;
+      }
+  }
+
+  Iterable<List<_TileModel>> columnsFromBottom() {
+    return columnsFromTop().map((e) => e.reversed.toList(growable: false));
+  }
+
+  /// rows from top to bottom
+  Iterable<List<_TileModel>> rowsFromLeft() sync* {
+    for (int y = 0; y < height; y++){
+      List<_TileModel> row = <_TileModel>[];
+      for (int x = 0; x < width; x++) {
+        try {
+          row.add(tileModels
+          .where((element) => element.xPos == x && element.yPos == y)
+          .first);
+        } on StateError {
+          // next coordinate
+        }
+      }
+      yield row;
+    }
+  }
+
+  /// rows from top to bottom
+  Iterable<List<_TileModel>> rowsFromRight() {
+    return rowsFromLeft().map((e) => e.reversed.toList(growable: false));
+  }
 
   /// remove all tiles
   void reset() {
@@ -68,35 +117,46 @@ class Game2048Model extends ChangeNotifier{
     notifyListeners();
   }
 
-  void testAnimation() async {
-    final tileModel = _TileModel.fromXY(exponent: 4, xPos: 0, yPos: 0);
-    tileModels.add(tileModel);
-    notifyListeners();
-    await Future.delayed(Duration(seconds: 2));
-    tileModel.xPos = 3;
-    notifyListeners();
-    await Future.delayed(Duration(seconds: 2));
-    tileModel.yPos = 2;
-    notifyListeners();
-    await Future.delayed(Duration(seconds: 2));
-    tileModel.pos = Point(1, 1);
-    notifyListeners();
-  }
-
   void moveUp() {
     print("up");
+    for (var column in columnsFromTop()) {
+      for (int i = 0; i < column.length; i++) {
+        column[i].yPos = i;
+      }
+    }
+    notifyListeners();
   }
 
   void moveLeft() {
     print("left");
+    for (var row in rowsFromLeft()) {
+      for (int i = 0; i < row.length; i++) {
+        row[i].xPos = i;
+      }
+    }
+    notifyListeners();
   }
 
   void moveRight() {
     print("right");
+    for (var row in rowsFromRight()) {
+      int x = width - 1;
+      for (int i = 0; i < row.length; i++) {
+        row[i].xPos = x--;
+      }
+    }
+    notifyListeners();
   }
 
   void moveDown() {
     print("down");
+    for (var column in columnsFromBottom()) {
+      int y = height - 1;
+      for (int i = 0; i < column.length; i++) {
+        column[i].yPos = y--;
+      }
+    }
+    notifyListeners();
   }
 
 
@@ -123,4 +183,8 @@ class _TileModel {
   _TileModel.fromXY({required exponent, required xPos, required yPos})
     : this(exponent: exponent, pos: Point(xPos, yPos));
 
+  @override
+  String toString() {
+    return '_TileModel{exponent: $exponent, pos: $pos}';
+  }
 }
