@@ -4,6 +4,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class Tile2048 extends StatelessWidget {
+  static final List<Color> colors = [
+    Colors.yellow,
+    Colors.orange,
+    Colors.red,
+    Colors.black
+  ];
+
   final int exponent;
   static final double size = 100;
   static final double borderRadius = 10;
@@ -21,10 +28,17 @@ class Tile2048 extends StatelessWidget {
         height: ((exponent == 0) ? 0 : size),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),
-            color: exponent == 0 ? Colors.transparent : Colors.accents[min(exponent, 15)]
+            color: exponent == 0 ? Colors.transparent : colors[min(exponent, colors.length - 1)]
         ),
         child: FittedBox(
-          child: Text(exponent == 0 ? " " : value.toString()),
+          child: Text(
+            exponent == 0 ? " " : value.toString(),
+            style: TextStyle(
+              // fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 48,
+            ),
+          ),
           fit: BoxFit.scaleDown,
         )
     );

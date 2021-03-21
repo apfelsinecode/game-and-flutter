@@ -18,21 +18,16 @@ class Game2048Model extends ChangeNotifier{
   final List<_TileModel> tileModels;
 
   Game2048Model(this.gridValues,  this.width, this.height,)
-      : tileModels = <_TileModel>[];
+      : tileModels = <_TileModel>[] {
+    spawn2or4();
+    spawn2or4();
+  }
 
   Game2048Model.fromSize({required int width, required int height})
     : this(List.generate(height, (index) => List.filled(width, 0)),
       width, height);
 
 
-  @deprecated
-  void _setValueOld({required int x, required int y, required int value}) {
-    if (0 <= x && x < width && 0 <= y && y < height && value >= 0) {
-      gridValues[y][x] = value;
-    } else{
-      throw ArgumentError();
-    }
-  }
 
   /// list (0, 0), (0, 1), ..., (0, width-1), (1, 0), ..., (height-1, width-1)
   Iterable<Point<int>> coordinates() sync* {
