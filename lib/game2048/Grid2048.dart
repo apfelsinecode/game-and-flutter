@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:game_and_flutter/game2048/Tile2048.dart';
@@ -55,11 +54,12 @@ class _Grid2048State extends State<Grid2048> {
   Iterable<Widget> tilesPositionedList() {
     return model.tileModels.map((tile) =>
       AnimatedPositioned(
+        key: ValueKey(tile.id),
         duration: Duration(milliseconds: 500),
         curve: Curves.easeInOutCubic,
         left: _leftOffset(tile.xPos),
         top: _topOffset(tile.yPos),
-        child: Tile2048(exponent: tile.exponent),
+        child: Tile2048(exponent: tile.exponent, id: tile.id),
       )
     );
   }

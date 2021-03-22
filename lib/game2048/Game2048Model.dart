@@ -51,7 +51,7 @@ class Game2048Model extends ChangeNotifier{
       int rndIdx = random.nextInt(emptyFields.length);
       final coordinate = emptyFields[rndIdx];
       tileModels.add(_TileModel(
-          exponent: random.nextBool() ? 1 : 2,
+          exponent: random.nextBool() ? 1 : 1 /*2*/,
           pos: coordinate,
         )
       );
@@ -140,17 +140,30 @@ class Game2048Model extends ChangeNotifier{
 
   /// return true iff any tile moved -> require new tile
   bool _moveUp() {
+    
     bool change = false;
+    
     for (var column in columnsFromTop()) {
-      for (int i = 0; i < column.length; i++) {
-        if (column[i].yPos != i) {
-          change = true;
-          column[i].yPos = i;
-        }
-      }
+      change |= moveTileList(
+        tiles: column,
+        xOrYGetter: (tile) => tile.yPos,
+        xOrYSetter: (tile, y) => tile.yPos = y,
+      );
     }
     notifyListeners();
     return change;
+    
+    // bool change = false;
+    // for (var column in columnsFromTop()) {
+    //   for (int i = 0; i < column.length; i++) {
+    //     if (column[i].yPos != i) {
+    //       change = true;
+    //       column[i].yPos = i;
+    //     }
+    //   }
+    // }
+    // notifyListeners();
+    // return change;
   }
 
   bool _moveLeft() {
@@ -199,6 +212,38 @@ class Game2048Model extends ChangeNotifier{
     return change;
   }
 
+  /// move tiles as forward as possible and merge tiles with same value
+  /// return true iff tiles merged
+  bool moveTileList({required List<_TileModel> tiles,
+    required int Function(_TileModel) xOrYGetter,
+    required void Function(_TileModel, int) xOrYSetter}) {
+    bool change = false;
+    for(int i = 0; i < tiles.length; i++) {
+
+      if (xOrYGetter(tiles[i]) != i) {
+        // tile has to be moved to index i
+        change = true;
+        xOrYSetter(tiles[i], i);
+      }
+
+      if (i < tiles.length - 1 && tiles[i].exponent == tiles[i+1].exponent) {
+        // tile i+1 has to merge with tile i (whose pos is i)
+        tiles[i].exponent++;
+        xOrYSetter(tiles[i+1], i);
+        deleteTile(tiles[i+1]);
+        i++;
+      }
+    }
+    return change;
+  }
+
+  /// tile get removed from grid, but gets time for animation to play
+  void deleteTile(_TileModel tile) async {
+    await Future.delayed(Duration(seconds: 1));
+    tileModels.remove(tile);
+    notifyListeners();
+  }
+
 
 }
 class _TileMove {
@@ -211,7 +256,9 @@ class _TileMove {
 }
 
 class _TileModel {
-  final int exponent;
+  static int idCount = 0;
+  int id;
+  int exponent;
   Point<int> pos;
 
   int get xPos => pos.x;
@@ -219,7 +266,7 @@ class _TileModel {
   set xPos(int newX) => pos = Point(newX, yPos);
   set yPos(int newY) => pos = Point(xPos, newY);
 
-  _TileModel({required this.exponent, required this.pos});
+  _TileModel({required this.exponent, required this.pos}) : id = idCount++;
   _TileModel.fromXY({required exponent, required xPos, required yPos})
     : this(exponent: exponent, pos: Point(xPos, yPos));
 
