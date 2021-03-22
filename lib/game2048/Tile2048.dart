@@ -35,7 +35,7 @@ class Tile2048 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-        key: UniqueKey(),
+        // key: UniqueKey(),
         duration: Duration(milliseconds: 100),
         curve: Curves.easeOut,
         width: ((exponent == 0) ? 0 : size),

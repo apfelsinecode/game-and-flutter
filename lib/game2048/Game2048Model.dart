@@ -144,7 +144,7 @@ class Game2048Model extends ChangeNotifier{
     bool change = false;
     
     for (var column in columnsFromTop()) {
-      change |= moveTileList(
+        change |= moveTileList(
         tiles: column,
         xOrYGetter: (tile) => tile.yPos,
         xOrYSetter: (tile, y) => tile.yPos = y,
@@ -228,10 +228,22 @@ class Game2048Model extends ChangeNotifier{
 
       if (i < tiles.length - 1 && tiles[i].exponent == tiles[i+1].exponent) {
         // tile i+1 has to merge with tile i (whose pos is i)
-        tiles[i].exponent++;
-        xOrYSetter(tiles[i+1], i);
-        deleteTile(tiles[i+1]);
-        i++;
+        final tileI = tiles[i];
+        final tileI1 = tiles[i+1];
+        int indexTileI = tileModels.indexOf(tileI);
+        int indexTileI1 = tileModels.indexOf(tileI1);
+        if (indexTileI1 > indexTileI) {
+          // tile[i] is moved at the end of the list, so it is rendered above
+          // tile[i+1]
+          tileModels.remove(tileI);
+          tileModels.add(tileI);
+        }
+        tileI.exponent++;
+        xOrYSetter(tileI1, i);
+        tiles.removeAt(i+1);
+        deleteTile(tileI1);
+
+        // i++;
       }
     }
     return change;
@@ -240,6 +252,7 @@ class Game2048Model extends ChangeNotifier{
   /// tile get removed from grid, but gets time for animation to play
   void deleteTile(_TileModel tile) async {
     await Future.delayed(Duration(seconds: 1));
+    // tile.disappear = true;
     tileModels.remove(tile);
     notifyListeners();
   }
@@ -260,6 +273,8 @@ class _TileModel {
   int id;
   int exponent;
   Point<int> pos;
+  // when true the tile animates from/to transparent
+  // bool disappear = false;
 
   int get xPos => pos.x;
   int get yPos => pos.y;
@@ -272,6 +287,6 @@ class _TileModel {
 
   @override
   String toString() {
-    return '_TileModel{exponent: $exponent, pos: $pos}';
+    return '_TileModel{id: $id, exponent: $exponent, pos: $pos}';
   }
 }

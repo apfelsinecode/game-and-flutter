@@ -116,7 +116,10 @@ class Controls2048 extends StatelessWidget {
   void onC(BuildContext context) {
     // final gameModel = Provider.of<Game2048Model>(context, listen: false);
     print("C");
-    // Provider.of<Game2048Model>(context).tileModels.forEach(print);
+    // final tm = Provider.of<Game2048Model>(context).rowsFromLeft();
+    // for (var row in tm) {
+    //   print(row);
+    // }
     // print(Provider.of<Game2048Model>(context).tileModels);
   }
 
