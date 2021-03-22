@@ -46,7 +46,8 @@ class Tile2048 extends StatelessWidget {
         ),
         child: FittedBox(
           child: Text(
-            exponent == 0 ? " " : "$value#$id", // value.toString(),
+            exponent == 0 ? " " : /*"$value\n#$id",*/ value.toString(),
+            textAlign: TextAlign.center,
             style: TextStyle(
               // fontWeight: FontWeight.bold,
               color: exponent > 2 ? Colors.white: Colors.black,

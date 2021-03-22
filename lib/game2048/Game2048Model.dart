@@ -51,7 +51,7 @@ class Game2048Model extends ChangeNotifier{
       int rndIdx = random.nextInt(emptyFields.length);
       final coordinate = emptyFields[rndIdx];
       tileModels.add(_TileModel(
-          exponent: random.nextBool() ? 1 : 1 /*2*/,
+          exponent: random.nextBool() ? 1 : 2 /*2*/,
           pos: coordinate,
         )
       );
@@ -85,7 +85,7 @@ class Game2048Model extends ChangeNotifier{
   }
 
   Iterable<List<_TileModel>> columnsFromBottom() {
-    return columnsFromTop().map((e) => e.reversed.toList(growable: false));
+    return columnsFromTop().map((e) => e.reversed.toList());
   }
 
   /// rows from top to bottom
@@ -107,12 +107,14 @@ class Game2048Model extends ChangeNotifier{
 
   /// rows from top to bottom
   Iterable<List<_TileModel>> rowsFromRight() {
-    return rowsFromLeft().map((e) => e.reversed.toList(growable: false));
+    return rowsFromLeft().map((e) => e.reversed.toList());
   }
 
   /// remove all tiles
   void reset() {
     tileModels.clear();
+    spawn2or4();
+    spawn2or4();
     notifyListeners();
   }
 
@@ -169,12 +171,18 @@ class Game2048Model extends ChangeNotifier{
   bool _moveLeft() {
     bool change = false;
     for (var row in rowsFromLeft()) {
-      for (int i = 0; i < row.length; i++) {
-        if (row[i].xPos != i) {
-          change = true;
-          row[i].xPos = i;
-        }
-      }
+      change |= moveTileList(
+          tiles: row,
+          xOrYGetter: (tile) => tile.xPos,
+          xOrYSetter: (tile, x) => tile.xPos = x
+      );
+
+      // for (int i = 0; i < row.length; i++) {
+      //   if (row[i].xPos != i) {
+      //     change = true;
+      //     row[i].xPos = i;
+      //   }
+      // }
     }
     notifyListeners();
     return change;
@@ -183,14 +191,20 @@ class Game2048Model extends ChangeNotifier{
   bool _moveRight() {
     bool change = false;
     for (var row in rowsFromRight()) {
-      int x = width - 1;
-      for (int i = 0; i < row.length; i++) {
-        if (row[i].xPos != x) {
-          change = true;
-          row[i].xPos = x;
-        }
-        x--;
-      }
+      change |= moveTileList(
+          tiles: row,
+          xOrYGetter: (tile) => width - 1 - tile.xPos,
+          xOrYSetter: (tile, x) => tile.xPos = width - 1 - x
+      );
+
+      // int x = width - 1;
+      // for (int i = 0; i < row.length; i++) {
+      //   if (row[i].xPos != x) {
+      //     change = true;
+      //     row[i].xPos = x;
+      //   }
+      //   x--;
+      // }
     }
     notifyListeners();
     return change;
@@ -199,14 +213,19 @@ class Game2048Model extends ChangeNotifier{
   bool _moveDown() {
     bool change = false;
     for (var column in columnsFromBottom()) {
-      int y = height - 1;
-      for (int i = 0; i < column.length; i++) {
-        if (column[i].yPos != y){
-          change = true;
-          column[i].yPos = y;
-        }
-        y--;
-      }
+      change |= moveTileList(
+          tiles: column,
+          xOrYGetter: (tile) => height - 1 - tile.yPos,
+          xOrYSetter: (tile, y) => tile.yPos = height - 1 - y
+      );
+      // int y = height - 1;
+      // for (int i = 0; i < column.length; i++) {
+      //   if (column[i].yPos != y){
+      //     change = true;
+      //     column[i].yPos = y;
+      //   }
+      //   y--;
+      // }
     }
     notifyListeners();
     return change;
@@ -228,6 +247,7 @@ class Game2048Model extends ChangeNotifier{
 
       if (i < tiles.length - 1 && tiles[i].exponent == tiles[i+1].exponent) {
         // tile i+1 has to merge with tile i (whose pos is i)
+        change = true;
         final tileI = tiles[i];
         final tileI1 = tiles[i+1];
         int indexTileI = tileModels.indexOf(tileI);
@@ -251,7 +271,7 @@ class Game2048Model extends ChangeNotifier{
 
   /// tile get removed from grid, but gets time for animation to play
   void deleteTile(_TileModel tile) async {
-    await Future.delayed(Duration(seconds: 1));
+    // await Future.delayed(Duration(seconds: 1));
     // tile.disappear = true;
     tileModels.remove(tile);
     notifyListeners();
@@ -269,7 +289,7 @@ class _TileMove {
 }
 
 class _TileModel {
-  static int idCount = 0;
+  static int idCount = 1 << 30;
   int id;
   int exponent;
   Point<int> pos;
