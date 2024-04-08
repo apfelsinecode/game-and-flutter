@@ -287,7 +287,8 @@ class _BallGameState extends State<BallGame> {
       onPressed: onPressed,
       child: icon,
       style: ElevatedButton.styleFrom(
-        primary: Colors.red,
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.white,
       ),
     );
 

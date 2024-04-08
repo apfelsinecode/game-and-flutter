@@ -48,21 +48,24 @@ class Controls2048 extends StatelessWidget {
             onPressed: () => onA(context),
             child: Text("A"),
             style: ElevatedButton.styleFrom(
-              primary: Colors.accents[1],
+              backgroundColor: Colors.primaries[1],
+              foregroundColor: Colors.white,
             ),
           ),
           ElevatedButton(
             onPressed: () => onB(context),
             child: Text("B (reset)"),
             style: ElevatedButton.styleFrom(
-              primary: Colors.accents[2],
+              backgroundColor: Colors.accents[2],
+              foregroundColor: Colors.white,
             ),
           ),
           ElevatedButton(
             onPressed: () => onC(context),
             child: Text("C"),
             style: ElevatedButton.styleFrom(
-                primary: Colors.accents[3],
+                backgroundColor: Colors.accents[3],
+                foregroundColor: Colors.white,
             ),
           ),
         ]
